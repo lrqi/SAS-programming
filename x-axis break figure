@@ -1,0 +1,14 @@
+*** use annotation to do the break and annotate for x label: ***;
+
+data anno;
+  set nsub;
+  retain ysys '' hsys '' size=3 position '5';
+  if 
+  text='Week 1';
+  x=0; y=6;
+  output;
+  text='//';
+  x=0; y=17;      **y means height from figure bottom, 17%; x is equal to x-axis value
+  output;
+  ...
+run;
