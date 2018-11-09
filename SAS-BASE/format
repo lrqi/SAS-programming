@@ -1,0 +1,28 @@
+*** FORMAT ***;
+*proc format;
+	invalue dosen
+			'SDTP/QD'=1
+			'MDTP/BID'=2
+			'MDTP/QD'=3
+			'MDTP/TID'=4
+			;
+  value 
+run;
+dosen=input(dose,dosen.);
+
+*Set format in Legend:
+data dose;
+	set dose end=eof;
+	fmtname='dose';
+	type='N';
+	output;
+	rename 	dosen=start
+		      doseon=label;
+run;
+
+proc sort data=dose; by start; run;
+
+proc format cntlin=dose; run;
+
+"format DOSEN dose." in proc gplot
+
