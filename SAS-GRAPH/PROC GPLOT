@@ -1,0 +1,7 @@
+*** Mean/individual figure ***;
+proc gplot data=final gout=&fig;
+     by xx;
+     plot   aval*areltm =subjid  /vaxis=axis2 haxis=axis1 vref=&lloq. lvref=2 noframe nolegend;
+	   format aval best8.;
+run;
+
