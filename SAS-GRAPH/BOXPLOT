@@ -1,4 +1,6 @@
 ****** PROC SGPLOT **********;
+http://support.sas.com/documentation/cdl/en/grstatproc/65235/HTML/default/viewer.htm#n1waawwbez01ppn15dn9ehmxzihf.htm
+
 ods listing style=journal;
 ods graphics / width=6.5in height=5in border=off;
 
