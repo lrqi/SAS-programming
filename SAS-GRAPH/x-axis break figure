@@ -45,4 +45,4 @@ proc gplot data=mplot gout=&fig;
 		format time myFormat.;
 run;
 
-https://github.com/lrqi/SAS-programming/issues/2#issue-379485945
+![x-axis break figure](https://user-images.githubusercontent.com/28472272/48308708-865d7080-e538-11e8-849e-6a250236bbf3.PNG)
