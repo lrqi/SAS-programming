@@ -1,7 +1,13 @@
 *** Mean/individual figure ***;
+axis1 label=("&xlabel.") offset=(1 1) order=(0 to 48 by 4) minor=(number=1);
+axis2 label=(a=90 "&ylabel. &yunit.") order = (0 to 100 by 10); 
+axis3 label=(a=90 "&ylabel. &yunit.") logbase=10  order =(1,10,100) interval=uneven;
+
+symbol1 c=black  i=join value=dot h=1;
+
 proc gplot data=final gout=&fig;
      by xx;
      plot   aval*areltm =subjid  /vaxis=axis2 haxis=axis1 vref=&lloq. lvref=2 noframe nolegend;
-	   format aval best8.;
+     format aval best8.;
 run;
 
