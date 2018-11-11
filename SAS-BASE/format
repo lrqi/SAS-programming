@@ -1,16 +1,19 @@
 *** FORMAT ***;
-*proc format;
+*1. proc format;
 	invalue dosen
 			'SDTP/QD'=1
 			'MDTP/BID'=2
 			'MDTP/QD'=3
 			'MDTP/TID'=4
 			;
-  value 
+	value $sex 
+		"Male" = "M"
+		"Female" = "F"; 
 run;
 dosen=input(dose,dosen.);
+sex  = put(DMSEX,$sex.);
 
-*Set format in Legend:
+*2. Set format in Legend:
 data dose;
 	set dose end=eof;
 	fmtname='dose';
