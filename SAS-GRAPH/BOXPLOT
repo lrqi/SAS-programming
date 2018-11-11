@@ -1,5 +1,5 @@
-## PROC SGPLOT
-*http://support.sas.com/documentation/cdl/en/grstatproc/65235/HTML/default/viewer.htm#n1waawwbez01ppn15dn9ehmxzihf.htm
+**** PROC SGPLOT****;
+http://support.sas.com/documentation/cdl/en/grstatproc/65235/HTML/default/viewer.htm#n1waawwbez01ppn15dn9ehmxzihf.htm
 
 ods listing style=journal;
 ods graphics / width=6.5in height=5in border=off;
@@ -10,8 +10,11 @@ ods graphics / width=6.5in height=5in border=off;
   title%eval(&title_count.+4) j=c "MDTP = #byval4";
 
 proc sgplot data=final1;
+
   /*  generate a vertical box plot that groups by DOSEN*/
+  
   by studyeye atptn  trtapen TRTPG1;
+  
   vbox aval / category=DOSEN group=ady groupdisplay=cluster
   lineattrs=(pattern=solid) whiskerattrs=(pattern=solid) EXTREME MEANATTRS=(symbol=circle) ; 
   xaxis display=all label=" " ;
