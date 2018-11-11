@@ -46,4 +46,3 @@ proc gplot data=mplot gout=&fig;
 run;
 
 
-![x-axis break figure](https://user-images.githubusercontent.com/28472272/48308708-865d7080-e538-11e8-849e-6a250236bbf3.PNG)
