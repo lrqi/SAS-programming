@@ -1,4 +1,4 @@
-*** use annotation to do the break and annotate for x label: ***;
+## use annotation to do the break and annotate for x label: ***;
 
 data anno;
   set nsub;
@@ -44,5 +44,6 @@ proc gplot data=mplot gout=&fig;
     plot aval*time=text / vaxis=axis2 haxis=axis1 anno=anno nolegend noframe;
 		format time myFormat.;
 run;
+
 
 ![x-axis break figure](https://user-images.githubusercontent.com/28472272/48308708-865d7080-e538-11e8-849e-6a250236bbf3.PNG)
