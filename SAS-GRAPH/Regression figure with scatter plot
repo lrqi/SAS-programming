@@ -1,1 +1,43 @@
-PROC MIX/PROC GLM
+## ＰＲＯＣ　ＲＥＧ
+***** Generate Regression Equation *****;
+proc reg data=plot(drop=_NAME_) tableout outest=est noprint;
+model SALIVA=UNBOUND_PLASMA /p rsquare adjrsq;
+output 	out=stat 
+		p=p
+		lcl=lower
+		ucl=upper
+		r=r;
+run;
+quit;
+
+***** Intercept, p-value, lower, upper *****;
+proc transpose data=est out=est1;
+	var UNBOUND_PLASMA;
+	id _type_;
+run;
+
+***** Slope *****;
+data est2;
+	set est;
+	if _type_='PARMS';
+	keep _type_ Intercept _RSQ_;
+run;
+
+***** Merge all regression parameter togeter *****;
+data est3;
+	merge est1 est2;
+	rename PARMS=UNBOUND_PLASMA;
+	drop _name_;
+run;
+
+data est3;
+	length equation ci rsq valp $100 ;
+	set est3;
+	if UNBOUND_PLASMA<0 then
+		equation="Natural log(Saliva)"||" = "||strip(put(intercept,10.3))||strip(put(UNBOUND_PLASMA,10.3))||"*Natural log(Unbound Plasma)";
+	else equation="Natural log(Saliva)"||" = "||strip(put(intercept,10.3))||"+"||strip(put(UNBOUND_PLASMA,10.3))||"*Natural log(Unbound Plasma)";
+	ci="95% CI of the Slope: ("||strip(put(L95B,10.4))||", "||strip(put(U95B,10.4))||")";
+	rsq="R2 = "||strip(put(_RSQ_,10.3));
+	valp="p-value for zero slope = "||strip(put(PVALUE,10.4));
+	slope=UNBOUND_PLASMA;
+run;
