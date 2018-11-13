@@ -1,0 +1,121 @@
+
+%macro set_axis_minmaxincrement(ds=,
+                                axisvar=,
+                                axis_length=51,
+                                zero_min=0,
+                                force_zero=0,
+								sa_min=999999,
+								sa_max=999999
+                               );
+                               
+    %global axis_min axis_max axis_increment;
+    %put set_axis_minmaxincrement Version 4.0;
+
+    /* get the high and low values */
+    proc sort data=&ds out=sortlb(keep=&axisvar);
+            by &axisvar;
+            where &axisvar ne .;
+    run;
+    data axisdata(keep=low high);
+            retain low 0;
+            set sortlb end=eof;
+            by &axisvar;
+            if _n_ = 1 then low = &axisvar;
+            if eof then do;
+                high = &axisvar;
+				if &sa_min ^= 999999 and &sa_min < low  then low  = &sa_min;
+				if &sa_max ^= 999999 and &sa_max > high then high = &sa_max;
+                %if &force_zero = 1 %then %do;
+                    if low > 0 then low = 0;
+                    else if high < 0 then high = 0;
+                %end;
+                output;
+            end;
+    run;
+
+
+    data axisdata;
+        set axisdata;
+        /* insure that high is greater than low */
+        if high <= low then do;
+          if abs(low) <= 1 then high = low + 1;
+          else                  high = low + 10;
+        end;
+
+	    /* Calculate the conversion unit to transform the standard range to      */
+	    /* include the actual range. This value is used to convert the standard */
+    	/* to the actual increment for the actual range.                         */
+	    axisrange = high - low;
+	    /* Ranges of less than 1 */
+	    if axisrange <= 6 then do;
+			check = 6;
+			conversion_unit = 0.1;
+			do until (axisrange > check);
+				check = check / 10;
+				if axisrange <= check then conversion_unit = conversion_unit / 10;
+			end;
+		end;
+
+	    /* Ranges of 1 or greater */
+	    else do;
+			check = 60;
+			conversion_unit = 1.0;
+			do while (axisrange > check);
+				check = check * 10;
+				conversion_unit = conversion_unit * 10;
+			end;
+	    end;
+	    /* standardize the range to lie between 6 to 60 */
+	    unit_range = axisrange / conversion_unit;
+
+	    /* Set the increment based on the unitized range */
+	    /* ‘Long’ axis, 8 - 12 increments                */
+        %if &axis_length > 50 %then %do;
+            if      unit_range < 12 then axisinc = 1   * conversion_unit;
+            else if unit_range < 24 then axisinc = 2   * conversion_unit;
+            else if unit_range < 30 then axisinc = 2.5 * conversion_unit;
+            else                         axisinc = 5   * conversion_unit;
+        %end;
+	    /* Otherwise, ‘short’ axis, 4 - 6 increments */
+        %else %do;
+            if      unit_range < 12 then axisinc = 2  * conversion_unit;
+            else if unit_range < 18 then axisinc = 3  * conversion_unit;
+            else if unit_range < 24 then axisinc = 4  * conversion_unit;
+            else if unit_range < 30 then axisinc = 5  * conversion_unit;
+            else                         axisinc = 10 * conversion_unit;
+        %end;
+
+	    /* Round the min's value to match the increment; if the number is   */
+        /* rounded up so that it becomes larger than the lowest data value, */ 
+        /* decrease the min by one increment.                               */
+	    axislow = round(low, axisinc);
+	    if axislow > low then axislow = axislow - axisinc;
+	    /* Round the max; if the number is rounded down,   */
+        /* increase the max by one increment.              */
+	    axishigh = round(high, axisinc);
+	    if axishigh < high then axishigh = axishigh + axisinc;
+
+
+        /* if the min should be no lower than 0 (zero), insure that is the case */
+        %if &zero_min = 1 %then %do;
+            if axislow < 0 then axislow = 0;
+        %end;
+    run;
+
+    /* put the values into the global macro variables */
+    data _null_;
+    set axisdata;
+    call symput('axis_min',compress(put(axislow, best.)));
+    call symput('axis_max',compress(put(axishigh, best.)));
+    call symput('axis_increment',compress(put(axisinc, best.)));
+    run;
+
+    %put axis_min = &axis_min;
+    %put axis_max = &axis_max;
+    %put axis_increment = &axis_increment;
+    %put set_axis_minmaxincrement completed;
+%mend set_axis_minmaxincrement;
+
+
+%Set_axis_minmaxincrement(ds=final(where=(PCTEST="&PCTEST.")), axisvar=aval, axis_length=45,force_zero=1);
+
