@@ -5,7 +5,7 @@ T
 adds tops and bottoms to each line.
 e.g.
   symbol1 c=black i=hilot value=none h=1;
-  symbol2 c=black i=hiloct value=none h=1; 
+  symbol2 c=black i=hiloct value=none h=1; *** draw three node for each record ***;
   
 2. *** Macro for Symbol ***;
 %macro symbol(ds=,var=,intial=1,color=black,height=1,intercept=join,value=YES);
