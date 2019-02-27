@@ -1,4 +1,4 @@
-INTERPOL=HILO<C><option>
+1. INTERPOL=HILO<C><option>
 C
 draws tick marks at the close value instead of at the mean value. Specifying C assumes that there are three values of Y (HIGH, LOW, and CLOSE) for every value of X. If more or fewer than three Y values are specified, the mean is ticked. The Y values can be in any order in the input data set.
 T
@@ -6,4 +6,58 @@ adds tops and bottoms to each line.
 e.g.
   symbol1 c=black i=hilot value=none h=1;
   symbol2 c=black i=hiloct value=none h=1; 
+  
+2. *** Macro for Symbol ***;
+%macro symbol(ds=,var=,intial=1,color=black,height=1,intercept=join,value=YES);
+
+%global symbn;
+
+proc format;
+	value symbol
+		1 = 'circle'
+		2 = 'dot'
+		3 = 'square'
+		4 = 'squarefilled'
+		other=.;
+	value color
+		1 = 'orange'
+		2 = 'blue'
+		3 = 'green'
+		4 = 'red'		
+	other=.;
+run;
+
+	data _null_;
+		file "symbol.inc";
+		length r1 c intercept value $100;
+		set &ds. end=last;
+		if &var. ^=.;
+		retain i &intial.;
+		c="&color.";
+		h=&height.;
+		intercept="&intercept.";
+		%if &value=YES %then %do;
+		value=put(&var.,symbol.);
+		%end;
+		%else %do; value='none'; %end;
+		%if &color=black %then %do;
+		c='black';
+		%end;
+		%else %do; c=put(&color.,color.); %end;
+		r1="symbol"||trim(left(put(i,best.)))||" c="||strip(c)||" h="||trim(left(put(h,best.)))||" i="||strip(intercept)||" value="||strip(value)||";";
+		put r1;
+		i+1;
+		if last then call symput ('symbn',strip(put(_n_,best.)));
+	run;
+
+
+	%let symbn=&symbn.;
+
+	%put Symbol&intial. to Symbol%eval(&symbn.+&intial.-1)  are generated;
+	%include "symbol.inc";
+%mend symbol;
+
+%symbol(ds=trtlst,var=trtn1,intial=1,height=1,intercept=hiloct,value=NO, color=trtn1);
+%symbol(ds=trtlst,var=trtn1,intial=%eval(&symbn.+1),height=1,intercept=join,value=YES, color=trtn1);
+
   
