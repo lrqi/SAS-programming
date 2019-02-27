@@ -1,0 +1,19 @@
+proc transpose data=final out=mplot;     *** transpose CI value into a variable col1;
+	by aperiod trtp atptn;
+run;
+
+data mplot;
+	set mplot;
+	name=strip(put(aperiod,best.))||strip(_name_);
+run;
+
+		
+  symbol1 c=black interpol=spline  value=none  l=2  h=0.8;
+  symbol2 c=black interpol=spline  value=dot  l=1  h=0.8;
+  symbol3 c=black interpol=spline  value=none  l=2  h=0.8;
+
+proc gplot data=mplot gout=&fig;
+	title2 j=c h=1.2 "Linear Scale";
+	footnote1 j=c h=1 " ";
+	plot col1*atptn=name/  vaxis=axis2 haxis=axis1 noframe nolegend; 
+run;
