@@ -1,0 +1,9 @@
+INTERPOL=HILO<C><option>
+C
+draws tick marks at the close value instead of at the mean value. Specifying C assumes that there are three values of Y (HIGH, LOW, and CLOSE) for every value of X. If more or fewer than three Y values are specified, the mean is ticked. The Y values can be in any order in the input data set.
+T
+adds tops and bottoms to each line.
+e.g.
+  symbol1 c=black i=hilot value=none h=1;
+  symbol2 c=black i=hiloct value=none h=1; 
+  
