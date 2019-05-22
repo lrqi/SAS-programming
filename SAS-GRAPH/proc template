@@ -1,0 +1,36 @@
+For Mean Figure:
+proc template;
+  define statgraph Simple_Layout_Graphs_s/store=work.templat;
+	dynamic _byval_ _byval2_;
+	begingraph;
+
+		entrytitle HALIGN=left "Gender: " _byval2_;
+		entrytitle " " ;
+
+		discreteattrvar attrvar=statmarkers var=stat attrmap='statattr';
+
+		layout lattice / columns=1;
+
+			column2headers;
+				entry 'Semi-Logarithmic Scale';
+			endcolumn2headers;
+
+			layout overlay /xaxisopts=(label="&xlabel." linearopts=(TICKVALUEPRIORITY=TRUE minorticks=true MINORTICKCOUNT=4 tickvaluesequence=(start=&xmin. end=&xmax. increment=&incre.)))
+							yaxisopts=(type=log logopts=(base=10 tickintervalstyle=logexpand minorticks=true THRESHOLDMAX=1 THRESHOLDMIN=1)
+										label="Plasma &ylabel.");
+
+				seriesplot x=atptn y=yvar / group=statmarkers display=(markers) markerattrs=(size=8pt) name='s';
+			endlayout;
+
+			sidebar / spacefill=false;
+	 			discretelegend 's' /border=false;
+        	endsidebar;
+		endlayout;
+	endgraph;
+end;
+
+
+proc sgrender data=plot dattrmap=attrmap template=Simple_Layout_Graphs_l;
+where sexn=&i.;
+by sexn sex1 sex;
+run;
