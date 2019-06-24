@@ -1,0 +1,10 @@
+******** Macro for Annotation *********;
+%ANNOMAC ;
+
+data anno;
+	set final;
+	by subjid;
+	%system(2,2,2);
+	if first.subjid then do; %move(visitdy,aval); end;
+	else do; %draw(visitdy,aval,black,1,1); end;
+run;
