@@ -1,0 +1,10 @@
+1. PROC　import
+proc import datafile="&G_PROJECTPATH.&G_TOPLEVEL\Documents\Specs\ADB_Spec.xlsx" out=mapp 
+	dbms=excel replace;
+	getnames=no;
+	sheet="ADSL$A3:A85";
+run;
+proc sql noprint;
+	select distinct F1 into: var separated by ',' from mapp;
+quit;
+%put &var;
